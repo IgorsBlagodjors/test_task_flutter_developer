@@ -48,7 +48,7 @@ class _GifHomePageState extends State<GifHomePage> {
               onFieldSubmitted: (query) {
                 setState(() {
                   _startSearchDebounceTimer(query);
-                  _clearTextField();
+                  _textEditingController.clear();
                 });
               },
               decoration: InputDecoration(
@@ -106,7 +106,7 @@ class _GifHomePageState extends State<GifHomePage> {
                       },
                       itemCount: gifs.length,
                       gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: 1.0,
                         mainAxisSpacing: 1.0,
@@ -129,9 +129,5 @@ class _GifHomePageState extends State<GifHomePage> {
         _gifFuture = _gifRepository.liveSearch(query);
       });
     });
-  }
-
-  void _clearTextField() {
-    _textEditingController.clear();
   }
 }
