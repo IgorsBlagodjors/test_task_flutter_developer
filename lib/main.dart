@@ -24,11 +24,14 @@ void main() {
   final networkGifRepository = NetworkGifRepository(gifApiClient);
   final networkRepositoryProvider = RepositoryProvider<GifRepository>(
       create: (context) => networkGifRepository);
-  runApp(MultiRepositoryProvider(
+  runApp(
+    MultiRepositoryProvider(
       providers: [
         networkRepositoryProvider,
       ],
-      child: const MaterialApp(
-        home: GifHomePage(),
-      )));
+      child: MaterialApp(
+        home: GifHomePage.withCubit(),
+      ),
+    ),
+  );
 }

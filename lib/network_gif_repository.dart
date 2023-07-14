@@ -28,4 +28,15 @@ class NetworkGifRepository implements GifRepository {
         width: e.images.fixed_height_small.width));
     return gif.toList();
   }
+
+  @override
+  Future<List<GifClass>> fetchMoreResults(int offset) async {
+    final response = await _gifApiClient.getItemsApiClient(offset: offset);
+    final gif = response.map((e) => GifClass(
+        id: e.id,
+        gifUrl: e.images.fixed_height_small.url,
+        height: e.images.fixed_height_small.height,
+        width: e.images.fixed_height_small.width));
+    return gif.toList();
+  }
 }
