@@ -11,6 +11,7 @@ class GifListState extends Equatable {
     required this.isLoading,
     required this.isError,
   });
+
   GifListState copyWith({
     List<GifClass>? items,
     bool? isLoading,

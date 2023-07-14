@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task_flutter_developer/gif_list_cubit.dart';
 import 'package:test_task_flutter_developer/gif_list_state.dart';
@@ -24,7 +24,6 @@ class _GifHomePageState extends State<GifHomePage> {
   late TextEditingController _textEditingController;
   late ScrollController _scrollController;
   int counter = 30;
-
   bool _isLoadingMoreGifs = false;
   ScrollPosition? _previousScrollPosition;
 
@@ -38,22 +37,18 @@ class _GifHomePageState extends State<GifHomePage> {
     _cubit.loadItems();
   }
 
-/*  @override
+  @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GifListCubit, GifListState>(builder: (context, state) {
       Widget child;
-      if (state.isLoading) {
-        child = const Center(
-          child: CircularProgressIndicator(),
-        );
-      } else if (state.isError) {
+      if (state.isError) {
         child = const Center(
           child: Text('Failure error'),
         );
@@ -68,6 +63,22 @@ class _GifHomePageState extends State<GifHomePage> {
                   data[index].gifUrl,
                   height: double.parse(data[index].height),
                   width: double.parse(data[index].width),
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    }
+                    return const Center(
+                      child: SizedBox(
+                        height: 15,
+                        width: 15,
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.green),
+                          strokeWidth: 5,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             );
@@ -139,19 +150,11 @@ class _GifHomePageState extends State<GifHomePage> {
     });
   }
 
-/*void _startSearchDebounceTimer(String query) {
-    _liveSearchTimer?.cancel();
-    _liveSearchTimer = Timer(const Duration(milliseconds: 300), () {
-      setState(() {
-        _gifFuture = _gifRepository.liveSearch(query);
-      });
-    });
-  }*/
   void _scrollListener() {
     double maxScrollExtent = _scrollController.position.maxScrollExtent;
     double currentScrollExtent = _scrollController.position.pixels;
     double remainingScrollExtent = maxScrollExtent - currentScrollExtent;
-    double pixelRemainder = 200.0;
+    double pixelRemainder = 300.0;
     print('CURRENT POSITION${_scrollController.position}');
     print('MAX POSITION${_scrollController.position.maxScrollExtent}');
 
@@ -166,33 +169,19 @@ class _GifHomePageState extends State<GifHomePage> {
       setState(() {
         _isLoadingMoreGifs = true;
       });
-
       _cubit.loadMoreItems(counter).then((_) {
         counter += 30;
         setState(() {
           _isLoadingMoreGifs = false;
         });
-        _scrollController.jumpTo(_previousScrollPosition?.pixels ?? 0.0);
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          _scrollController.animateTo(
+            _previousScrollPosition?.pixels ?? 0.0,
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeInOut,
+          );
+        });
       });
     }
   }
-/*void _loadMoreResults() async {
-    setState(() {
-      _isLoadingMoreGifs = true;
-    });
-    final additionalResults = await _gifRepository.fetchMoreResults(counter);
-    counter += 30;
-
-    final currentResults = await _gifFuture;
-    setState(() {
-      _gifFuture = Future.value(currentResults + additionalResults);
-      _isLoadingMoreGifs = false;
-    });
-
-    if (_scrollController.hasClients) {
-      SchedulerBinding.instance?.addPostFrameCallback((_) {
-        _scrollController.jumpTo(_previousScrollPosition?.pixels ?? 0.0);
-      });
-    }
-  }*/
 }
