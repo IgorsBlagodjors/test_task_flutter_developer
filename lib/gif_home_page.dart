@@ -23,9 +23,8 @@ class _GifHomePageState extends State<GifHomePage> {
 
   late TextEditingController _textEditingController;
   late ScrollController _scrollController;
-  int counter = 30;
+  int offset = 30;
   bool _isLoadingMoreGifs = false;
-  ScrollPosition? _previousScrollPosition;
 
   @override
   void initState() {
@@ -89,7 +88,7 @@ class _GifHomePageState extends State<GifHomePage> {
             crossAxisSpacing: 1.0,
             mainAxisSpacing: 1.0,
           ),
-          primary: false,
+          // primary: false,
         );
       }
       return Scaffold(
@@ -106,7 +105,6 @@ class _GifHomePageState extends State<GifHomePage> {
                 controller: _textEditingController,
                 onFieldSubmitted: (query) {
                   setState(() {
-                    //_startSearchDebounceTimer(query);
                     _cubit.liveSearch(query);
                     _textEditingController.clear();
                   });
@@ -159,7 +157,6 @@ class _GifHomePageState extends State<GifHomePage> {
     print('MAX POSITION${_scrollController.position.maxScrollExtent}');
 
     if (remainingScrollExtent < pixelRemainder && !_isLoadingMoreGifs) {
-      _previousScrollPosition = _scrollController.position;
       _loadMoreGifs();
     }
   }
@@ -169,17 +166,10 @@ class _GifHomePageState extends State<GifHomePage> {
       setState(() {
         _isLoadingMoreGifs = true;
       });
-      _cubit.loadMoreItems(counter).then((_) {
-        counter += 30;
+      _cubit.loadMoreItems(offset).then((_) {
+        offset += 30;
         setState(() {
           _isLoadingMoreGifs = false;
-        });
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          _scrollController.animateTo(
-            _previousScrollPosition?.pixels ?? 0.0,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.easeInOut,
-          );
         });
       });
     }
