@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task_flutter_developer/gif_list_cubit.dart';
 import 'package:test_task_flutter_developer/gif_list_state.dart';
@@ -20,11 +19,11 @@ class GifHomePage extends StatefulWidget {
 
 class _GifHomePageState extends State<GifHomePage> {
   late final GifListCubit _cubit;
-
   late TextEditingController _textEditingController;
   late ScrollController _scrollController;
   int offset = 30;
   bool _isLoadingMoreGifs = false;
+  String? _queryFromLiveSearch;
 
   @override
   void initState() {
@@ -40,6 +39,7 @@ class _GifHomePageState extends State<GifHomePage> {
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+    _textEditingController.dispose();
     super.dispose();
   }
 
@@ -53,6 +53,7 @@ class _GifHomePageState extends State<GifHomePage> {
         );
       } else {
         final data = state.items;
+
         child = GridView.builder(
           controller: _scrollController,
           itemBuilder: (_, index) {
@@ -78,6 +79,11 @@ class _GifHomePageState extends State<GifHomePage> {
                       ),
                     );
                   },
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Center(
+                      child: Text('Image loading failed'),
+                    );
+                  },
                 ),
               ],
             );
@@ -85,8 +91,8 @@ class _GifHomePageState extends State<GifHomePage> {
           itemCount: data.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
-            crossAxisSpacing: 1.0,
-            mainAxisSpacing: 1.0,
+            crossAxisSpacing: 1,
+            mainAxisSpacing: 1,
           ),
           // primary: false,
         );
@@ -105,8 +111,10 @@ class _GifHomePageState extends State<GifHomePage> {
                 controller: _textEditingController,
                 onFieldSubmitted: (query) {
                   setState(() {
+                    _queryFromLiveSearch = query;
                     _cubit.liveSearch(query);
                     _textEditingController.clear();
+                    _scrollController.jumpTo(0.0);
                   });
                 },
                 decoration: InputDecoration(
@@ -116,17 +124,16 @@ class _GifHomePageState extends State<GifHomePage> {
                     color: Colors.black,
                   ),
                   contentPadding: const EdgeInsets.only(
-                    left: 48.0,
-                    top: 19.5,
-                    right: 147.0,
-                    bottom: 19.5,
+                    left: 48,
+                    top: 20,
+                    right: 147,
+                    bottom: 20,
                   ),
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(
-                      left: 15.0,
-                      top: 18.97,
-                      right: 0.0,
-                      bottom: 19.03,
+                      left: 15,
+                      top: 19,
+                      bottom: 19,
                     ),
                     child: Icon(Icons.search),
                   ),
@@ -152,9 +159,9 @@ class _GifHomePageState extends State<GifHomePage> {
     double maxScrollExtent = _scrollController.position.maxScrollExtent;
     double currentScrollExtent = _scrollController.position.pixels;
     double remainingScrollExtent = maxScrollExtent - currentScrollExtent;
-    double pixelRemainder = 300.0;
-    print('CURRENT POSITION${_scrollController.position}');
-    print('MAX POSITION${_scrollController.position.maxScrollExtent}');
+    double pixelRemainder = 300;
+    // print('CURRENT POSITION${_scrollController.position}');
+    // print('MAX POSITION${_scrollController.position.maxScrollExtent}');
 
     if (remainingScrollExtent < pixelRemainder && !_isLoadingMoreGifs) {
       _loadMoreGifs();
@@ -162,16 +169,14 @@ class _GifHomePageState extends State<GifHomePage> {
   }
 
   void _loadMoreGifs() {
-    if (!_isLoadingMoreGifs) {
+    setState(() {
+      _isLoadingMoreGifs = true;
+    });
+    _cubit.loadMoreItems(_queryFromLiveSearch, offset).then((_) {
+      offset += 30;
       setState(() {
-        _isLoadingMoreGifs = true;
+        _isLoadingMoreGifs = false;
       });
-      _cubit.loadMoreItems(offset).then((_) {
-        offset += 30;
-        setState(() {
-          _isLoadingMoreGifs = false;
-        });
-      });
-    }
+    });
   }
 }

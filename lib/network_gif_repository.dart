@@ -12,9 +12,9 @@ class NetworkGifRepository implements GifRepository {
     final response = await _gifApiClient.getItemsApiClient();
     final gif = response.map((e) => GifClass(
         id: e.id,
-        gifUrl: e.images.fixed_height_small.url,
-        height: e.images.fixed_height_small.height,
-        width: e.images.fixed_height_small.width));
+        gifUrl: e.images.fixedHeightSmall.url,
+        height: e.images.fixedHeightSmall.height,
+        width: e.images.fixedHeightSmall.width));
     return gif.toList();
   }
 
@@ -23,20 +23,23 @@ class NetworkGifRepository implements GifRepository {
     final response = await _gifApiClient.getItemsApiClient(query: query);
     final gif = response.map((e) => GifClass(
         id: e.id,
-        gifUrl: e.images.fixed_height_small.url,
-        height: e.images.fixed_height_small.height,
-        width: e.images.fixed_height_small.width));
+        gifUrl: e.images.fixedHeightSmall.url,
+        height: e.images.fixedHeightSmall.height,
+        width: e.images.fixedHeightSmall.width));
     return gif.toList();
   }
 
   @override
-  Future<List<GifClass>> fetchMoreResults(int offset) async {
-    final response = await _gifApiClient.getItemsApiClient(offset: offset);
+  Future<List<GifClass>> fetchMoreResults(String? query, int offset) async {
+    bool isQueryEmpty = query == null;
+    final response = isQueryEmpty
+        ? await _gifApiClient.getItemsApiClient(offset: offset)
+        : await _gifApiClient.getItemsApiClient(query: query, offset: offset);
     final gif = response.map((e) => GifClass(
         id: e.id,
-        gifUrl: e.images.fixed_height_small.url,
-        height: e.images.fixed_height_small.height,
-        width: e.images.fixed_height_small.width));
+        gifUrl: e.images.fixedHeightSmall.url,
+        height: e.images.fixedHeightSmall.height,
+        width: e.images.fixedHeightSmall.width));
     return gif.toList();
   }
 }

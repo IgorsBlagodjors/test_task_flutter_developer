@@ -32,9 +32,11 @@ class DataItems extends Equatable {
 
 @JsonSerializable(createToJson: false)
 class ImagesItems {
-  final FixedHeightSmallItems fixed_height_small;
+  @JsonKey(
+    name: 'fixed_height_small')
+  final FixedHeightSmallItems fixedHeightSmall;
 
-  const ImagesItems({required this.fixed_height_small});
+  const ImagesItems({required this.fixedHeightSmall});
 
   factory ImagesItems.fromJson(Map<String, dynamic> json) =>
       _$ImagesItemsFromJson(json);

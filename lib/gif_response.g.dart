@@ -18,7 +18,7 @@ DataItems _$DataItemsFromJson(Map<String, dynamic> json) => DataItems(
     );
 
 ImagesItems _$ImagesItemsFromJson(Map<String, dynamic> json) => ImagesItems(
-      fixed_height_small: FixedHeightSmallItems.fromJson(
+      fixedHeightSmall: FixedHeightSmallItems.fromJson(
           json['fixed_height_small'] as Map<String, dynamic>),
     );
 

@@ -18,12 +18,12 @@ class GifListState extends Equatable {
     bool? isError,
   }) =>
       GifListState(
-          items: items ?? this.items,
-          isLoading: isLoading ?? this.isLoading,
-          isError: isError ?? this.isError);
+        items: items ?? this.items,
+        isLoading: isLoading ?? this.isLoading,
+        isError: isError ?? this.isError,
+      );
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
         items,
         isLoading,
