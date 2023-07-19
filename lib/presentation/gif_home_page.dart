@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:test_task_flutter_developer/gif_list_cubit.dart';
-import 'package:test_task_flutter_developer/gif_list_state.dart';
+import 'package:test_task_flutter_developer/presentation/bloc/gif_list_cubit.dart';
+import 'package:test_task_flutter_developer/presentation/bloc/gif_list_state.dart';
 
 class GifHomePage extends StatefulWidget {
   const GifHomePage({Key? key}) : super(key: key);
@@ -31,8 +31,8 @@ class _GifHomePageState extends State<GifHomePage> {
     _textEditingController = TextEditingController();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _cubit = context.read();
-    _cubit.loadItems();
+    _cubit = BlocProvider.of<GifListCubit>(context);
+    _cubit.fetchCollection();
   }
 
   @override
@@ -40,6 +40,7 @@ class _GifHomePageState extends State<GifHomePage> {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     _textEditingController.dispose();
+    _cubit.close();
     super.dispose();
   }
 
@@ -53,7 +54,6 @@ class _GifHomePageState extends State<GifHomePage> {
         );
       } else {
         final data = state.items;
-
         child = GridView.builder(
           controller: _scrollController,
           itemBuilder: (_, index) {
@@ -172,7 +172,7 @@ class _GifHomePageState extends State<GifHomePage> {
     setState(() {
       _isLoadingMoreGifs = true;
     });
-    _cubit.loadMoreItems(_queryFromLiveSearch, offset).then((_) {
+    _cubit.fetchMoreGifs(_queryFromLiveSearch, offset).then((_) {
       offset += 30;
       setState(() {
         _isLoadingMoreGifs = false;

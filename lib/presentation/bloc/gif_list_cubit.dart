@@ -1,12 +1,13 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:test_task_flutter_developer/gifClass.dart';
-import 'package:test_task_flutter_developer/gif_list_state.dart';
-import 'package:test_task_flutter_developer/gif_repository.dart';
+import 'package:logger/logger.dart';
+import 'package:test_task_flutter_developer/domain/gif_class.dart';
+import 'package:test_task_flutter_developer/presentation/bloc/gif_list_state.dart';
+import 'package:test_task_flutter_developer/domain/gif_repository.dart';
 
 class GifListCubit extends Cubit<GifListState> {
   final GifRepository _gifRepository;
   List<GifClass> _currentItems = [];
+  final logger = Logger();
 
   GifListCubit(this._gifRepository)
       : super(
@@ -17,16 +18,14 @@ class GifListCubit extends Cubit<GifListState> {
           ),
         );
 
-
-  Future<void> loadItems() async {
+  Future<void> fetchCollection() async {
     emit(state.copyWith(isLoading: true));
     try {
       final items = await _gifRepository.fetchCollection();
       _currentItems = items;
       emit(state.copyWith(items: items, isLoading: false));
     } on Exception catch (ex, stacktrace) {
-      // ignore: avoid_print
-      print('Failed to load: ex $ex, stacktrace: $stacktrace');
+      logger.e('Failed to load: ex $ex, stacktrace: $stacktrace');
       emit(state.copyWith(isError: true, isLoading: false));
     }
   }
@@ -39,19 +38,19 @@ class GifListCubit extends Cubit<GifListState> {
       _currentItems = items;
       emit(state.copyWith(items: items, isLoading: false));
     } on Exception catch (ex, stacktrace) {
-      print('Failed to load: ex $ex, stacktrace: $stacktrace');
+      logger.e('Failed to load: ex $ex, stacktrace: $stacktrace');
       emit(state.copyWith(isError: true, isLoading: false));
     }
   }
 
-  Future<void> loadMoreItems(String? query, int offset) async {
+  Future<void> fetchMoreGifs(String? query, int offset) async {
     emit(state.copyWith(isLoading: true));
     try {
-      final items = await _gifRepository.fetchMoreResults(query, offset);
+      final items = await _gifRepository.fetchMoreGifs(query, offset);
       _currentItems.addAll(items);
       emit(state.copyWith(items: _currentItems, isLoading: false));
     } on Exception catch (ex, stacktrace) {
-      print('Failed to load: ex $ex, stacktrace: $stacktrace');
+      logger.e('Failed to load: ex $ex, stacktrace: $stacktrace');
       emit(state.copyWith(isError: true, isLoading: false));
     }
   }

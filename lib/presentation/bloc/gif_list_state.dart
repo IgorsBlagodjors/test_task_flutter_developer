@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:test_task_flutter_developer/gifClass.dart';
+import 'package:test_task_flutter_developer/domain/gif_class.dart';
 
 class GifListState extends Equatable {
   final List<GifClass> items;

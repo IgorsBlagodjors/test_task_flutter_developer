@@ -1,6 +1,6 @@
-import 'package:test_task_flutter_developer/gifClass.dart';
-import 'package:test_task_flutter_developer/gif_api_client.dart';
-import 'package:test_task_flutter_developer/gif_repository.dart';
+import 'package:test_task_flutter_developer/domain/gif_class.dart';
+import 'package:test_task_flutter_developer/data/gif_api_client.dart';
+import 'package:test_task_flutter_developer/domain/gif_repository.dart';
 
 class NetworkGifRepository implements GifRepository {
   final GifApiClient _gifApiClient;
@@ -30,7 +30,7 @@ class NetworkGifRepository implements GifRepository {
   }
 
   @override
-  Future<List<GifClass>> fetchMoreResults(String? query, int offset) async {
+  Future<List<GifClass>> fetchMoreGifs(String? query, int offset) async {
     bool isQueryEmpty = query == null;
     final response = isQueryEmpty
         ? await _gifApiClient.getItemsApiClient(offset: offset)

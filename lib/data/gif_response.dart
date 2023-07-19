@@ -1,23 +1,19 @@
-import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'gif_response.g.dart';
 
 @JsonSerializable(createToJson: false)
-class FullResponse extends Equatable {
+class FullResponse {
   List<DataItems> data;
 
   FullResponse({required this.data});
 
   factory FullResponse.fromJson(Map<String, dynamic> json) =>
       _$FullResponseFromJson(json);
-
-  @override
-  List<Object?> get props => [data];
 }
 
 @JsonSerializable(createToJson: false)
-class DataItems extends Equatable {
+class DataItems {
   final String id;
   final ImagesItems images;
 
@@ -25,15 +21,11 @@ class DataItems extends Equatable {
 
   factory DataItems.fromJson(Map<String, dynamic> json) =>
       _$DataItemsFromJson(json);
-
-  @override
-  List<Object?> get props => [id];
 }
 
 @JsonSerializable(createToJson: false)
 class ImagesItems {
-  @JsonKey(
-    name: 'fixed_height_small')
+  @JsonKey(name: 'fixed_height_small')
   final FixedHeightSmallItems fixedHeightSmall;
 
   const ImagesItems({required this.fixedHeightSmall});
