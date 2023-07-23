@@ -110,12 +110,11 @@ class _GifHomePageState extends State<GifHomePage> {
               TextFormField(
                 controller: _textEditingController,
                 onFieldSubmitted: (query) {
-                  setState(() {
-                    _queryFromLiveSearch = query;
-                    _cubit.liveSearch(query);
-                    _textEditingController.clear();
-                    _scrollController.jumpTo(0.0);
-                  });
+                  offset = 30;
+                  _queryFromLiveSearch = query;
+                  _cubit.liveSearch(query);
+                  _scrollController.jumpTo(0.0);
+                  _textEditingController.clear();
                 },
                 decoration: InputDecoration(
                   floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -169,14 +168,10 @@ class _GifHomePageState extends State<GifHomePage> {
   }
 
   void _loadMoreGifs() {
-    setState(() {
-      _isLoadingMoreGifs = true;
-    });
+    _isLoadingMoreGifs = true;
     _cubit.fetchMoreGifs(_queryFromLiveSearch, offset).then((_) {
       offset += 30;
-      setState(() {
-        _isLoadingMoreGifs = false;
-      });
+      _isLoadingMoreGifs = false;
     });
   }
 }

@@ -18,8 +18,8 @@ class GifApiClient {
     final response =
         await _dio.get('/v1/gifs/search', queryParameters: queryParams);
     final fullResponse = FullResponse.fromJson(response.data);
-    // print('QUERY TEST!!! $query');
-    // print('COUNTER OFFSET TEST!!!!! $offset');
+     //print('QUERY TEST!!! $query');
+     //print('COUNTER OFFSET TEST!!!!! $offset');
     return fullResponse.data;
   }
 }
