@@ -7,8 +7,11 @@ class GifApiClient {
 
   GifApiClient(this._dio);
 
-  Future<List<DataItems>> getItemsApiClient(
-      {String query = "Shaman King", int limit = 30, int offset = 0}) async {
+  Future<List<DataItems>> getItemsApiClient({
+    String query = "Shaman King",
+    int limit = 30,
+    int offset = 0,
+  }) async {
     final queryParams = {
       'api_key': ApiKey.gifApiKey,
       'q': query,
@@ -18,8 +21,8 @@ class GifApiClient {
     final response =
         await _dio.get('/v1/gifs/search', queryParameters: queryParams);
     final fullResponse = FullResponse.fromJson(response.data);
-     //print('QUERY TEST!!! $query');
-     //print('COUNTER OFFSET TEST!!!!! $offset');
+    print('QUERY TEST!!! $query');
+    print('COUNTER OFFSET TEST!!!!! $offset');
     return fullResponse.data;
   }
 }

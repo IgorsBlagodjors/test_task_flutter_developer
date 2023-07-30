@@ -41,7 +41,7 @@ class FixedHeightSmallItems {
   final String url;
 
   const FixedHeightSmallItems(
-      {required this.height, required this.width, required this.url});
+      {required this.height, required this.width, required this.url,});
 
   factory FixedHeightSmallItems.fromJson(Map<String, dynamic> json) =>
       _$FixedHeightSmallItemsFromJson(json);

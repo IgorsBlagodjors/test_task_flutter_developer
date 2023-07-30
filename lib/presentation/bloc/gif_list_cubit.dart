@@ -18,36 +18,12 @@ class GifListCubit extends Cubit<GifListState> {
           ),
         );
 
-  Future<void> fetchCollection() async {
-    emit(state.copyWith(isLoading: true));
-    try {
-      final items = await _gifRepository.fetchCollection();
-      _currentItems = items;
-      emit(state.copyWith(items: items, isLoading: false));
-    } on Exception catch (ex, stacktrace) {
-      logger.e('Failed to load: ex $ex, stacktrace: $stacktrace');
-      emit(state.copyWith(isError: true, isLoading: false));
-    }
-  }
-
-  Future<void> liveSearch(String query) async {
+  Future<void> fetchCollection(String? query, int offset) async {
     emit(state.copyWith(isLoading: true));
     await Future.delayed(const Duration(milliseconds: 300));
     try {
-      final items = await _gifRepository.liveSearch(query);
-      _currentItems = items;
-      emit(state.copyWith(items: items, isLoading: false));
-    } on Exception catch (ex, stacktrace) {
-      logger.e('Failed to load: ex $ex, stacktrace: $stacktrace');
-      emit(state.copyWith(isError: true, isLoading: false));
-    }
-  }
-
-  Future<void> fetchMoreGifs(String? query, int offset) async {
-    emit(state.copyWith(isLoading: true));
-    try {
-      final items = await _gifRepository.fetchMoreGifs(query, offset);
-      _currentItems.addAll(items);
+      final items = await _gifRepository.fetchCollection(query, offset);
+      offset != 0 ? _currentItems.addAll(items) : _currentItems = items;
       emit(state.copyWith(items: _currentItems, isLoading: false));
     } on Exception catch (ex, stacktrace) {
       logger.e('Failed to load: ex $ex, stacktrace: $stacktrace');

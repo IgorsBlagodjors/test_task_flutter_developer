@@ -8,24 +8,33 @@ class NetworkGifRepository implements GifRepository {
   NetworkGifRepository(this._gifApiClient);
 
   @override
-  Future<List<GifClass>> fetchCollection() async {
-    final response = await _gifApiClient.getItemsApiClient();
-    final gif = response.map((e) => GifClass(
+  Future<List<GifClass>> fetchCollection(String? query, int offset) async {
+    bool isQueryEmpty = query == null;
+    final response = isQueryEmpty
+        ? await _gifApiClient.getItemsApiClient(offset: offset)
+        : await _gifApiClient.getItemsApiClient(query: query, offset: offset);
+    final gif = response.map(
+      (e) => GifClass(
         id: e.id,
         gifUrl: e.images.fixedHeightSmall.url,
         height: e.images.fixedHeightSmall.height,
-        width: e.images.fixedHeightSmall.width));
+        width: e.images.fixedHeightSmall.width,
+      ),
+    );
     return gif.toList();
   }
 
   @override
   Future<List<GifClass>> liveSearch(String query) async {
     final response = await _gifApiClient.getItemsApiClient(query: query);
-    final gif = response.map((e) => GifClass(
+    final gif = response.map(
+      (e) => GifClass(
         id: e.id,
         gifUrl: e.images.fixedHeightSmall.url,
         height: e.images.fixedHeightSmall.height,
-        width: e.images.fixedHeightSmall.width));
+        width: e.images.fixedHeightSmall.width,
+      ),
+    );
     return gif.toList();
   }
 
@@ -35,11 +44,14 @@ class NetworkGifRepository implements GifRepository {
     final response = isQueryEmpty
         ? await _gifApiClient.getItemsApiClient(offset: offset)
         : await _gifApiClient.getItemsApiClient(query: query, offset: offset);
-    final gif = response.map((e) => GifClass(
+    final gif = response.map(
+      (e) => GifClass(
         id: e.id,
         gifUrl: e.images.fixedHeightSmall.url,
         height: e.images.fixedHeightSmall.height,
-        width: e.images.fixedHeightSmall.width));
+        width: e.images.fixedHeightSmall.width,
+      ),
+    );
     return gif.toList();
   }
 }

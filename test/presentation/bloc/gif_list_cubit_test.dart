@@ -40,7 +40,7 @@ void main() {
     blocTest(
       'Load Gift When App Starts',
       build: () => cubit,
-      act: (cubit) => cubit.fetchCollection(),
+      act: (cubit) => cubit.fetchCollection('empty', 12),
       expect: () => [
         const GifListState(
           items: [],
@@ -61,85 +61,5 @@ void main() {
         ),
       ],
     );
-    blocTest(
-      'Load More Gifs Test',
-      build: () => cubit,
-      act: (cubit) => cubit.fetchMoreGifs('empty', 12),
-      expect: () => [
-        const GifListState(
-          items: [],
-          isLoading: true,
-          isError: false,
-        ),
-        const GifListState(
-          items: [
-            GifClass(
-              id: 'afg',
-              gifUrl: 'Unknown',
-              height: '300',
-              width: '100',
-            ),
-          ],
-          isLoading: false,
-          isError: false,
-        ),
-      ],
-    );
-    blocTest(
-      'Live Search Test',
-      build: () => cubit,
-      act: (cubit) => cubit.liveSearch('empty'),
-      expect: () => [
-        const GifListState(
-          items: [],
-          isLoading: true,
-          isError: false,
-        ),
-        const GifListState(
-          items: [
-            GifClass(
-              id: 'afg',
-              gifUrl: 'Unknown',
-              height: '300',
-              width: '100',
-            ),
-          ],
-          isLoading: false,
-          isError: false,
-        ),
-      ],
-    );
-    group('Load More Gifs Test', () {
-      blocTest(
-        'Fetching Test',
-        build: () => cubit,
-        act: (cubit) => cubit.fetchMoreGifs('Test', 12),
-        expect: () => [
-          const GifListState(
-            items: [],
-            isLoading: true,
-            isError: false,
-          ),
-          const GifListState(
-            items: [
-              GifClass(
-                id: 'afg',
-                gifUrl: 'Unknown',
-                height: '300',
-                width: '100',
-              ),
-            ],
-            isLoading: false,
-            isError: false,
-          ),
-        ],
-      );
-      blocTest('Exception Test',
-          build: () => cubit,
-          act: (cubit) => cubit.fetchMoreGifs(null, 12),
-          verify: (cubit) {
-            expect(cubit.state.items, isEmpty);
-          });
-    });
   });
 }
