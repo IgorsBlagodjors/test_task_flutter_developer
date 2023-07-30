@@ -23,7 +23,6 @@ class _GifHomePageState extends State<GifHomePage> {
   late final GifListCubit _cubit;
   late TextEditingController _textEditingController;
   late ScrollController _scrollController;
-  int offset = 0;
   bool _isLoadingMoreGifs = false;
   String? _queryFromLiveSearch;
   Timer? _searchTimer;
@@ -35,7 +34,7 @@ class _GifHomePageState extends State<GifHomePage> {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _cubit = BlocProvider.of<GifListCubit>(context);
-    _cubit.fetchCollection(_queryFromLiveSearch, offset);
+    _cubit.fetchCollection(_queryFromLiveSearch);
   }
 
   @override
@@ -114,12 +113,12 @@ class _GifHomePageState extends State<GifHomePage> {
                   controller: _textEditingController,
                   onChanged: (query) {
                     _searchTimer?.cancel();
-                    offset = 0;
+                    _cubit.setOffset(0);
                     _searchTimer = Timer(
                       const Duration(milliseconds: 300),
                       () {
                         _queryFromLiveSearch = query;
-                        _cubit.fetchCollection(query, offset);
+                        _cubit.fetchCollection(query);
                         _scrollController.jumpTo(0.0);
                       },
                     );
@@ -181,8 +180,7 @@ class _GifHomePageState extends State<GifHomePage> {
 
   void _loadMoreGifs() {
     _isLoadingMoreGifs = true;
-    offset += 30;
-    _cubit.fetchCollection(_queryFromLiveSearch, offset).then((_) {
+    _cubit.fetchCollection(_queryFromLiveSearch).then((_) {
       _isLoadingMoreGifs = false;
     });
   }

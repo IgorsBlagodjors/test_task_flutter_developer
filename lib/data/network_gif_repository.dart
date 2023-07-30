@@ -23,35 +23,4 @@ class NetworkGifRepository implements GifRepository {
     );
     return gif.toList();
   }
-
-  @override
-  Future<List<GifClass>> liveSearch(String query) async {
-    final response = await _gifApiClient.getItemsApiClient(query: query);
-    final gif = response.map(
-      (e) => GifClass(
-        id: e.id,
-        gifUrl: e.images.fixedHeightSmall.url,
-        height: e.images.fixedHeightSmall.height,
-        width: e.images.fixedHeightSmall.width,
-      ),
-    );
-    return gif.toList();
-  }
-
-  @override
-  Future<List<GifClass>> fetchMoreGifs(String? query, int offset) async {
-    bool isQueryEmpty = query == null;
-    final response = isQueryEmpty
-        ? await _gifApiClient.getItemsApiClient(offset: offset)
-        : await _gifApiClient.getItemsApiClient(query: query, offset: offset);
-    final gif = response.map(
-      (e) => GifClass(
-        id: e.id,
-        gifUrl: e.images.fixedHeightSmall.url,
-        height: e.images.fixedHeightSmall.height,
-        width: e.images.fixedHeightSmall.width,
-      ),
-    );
-    return gif.toList();
-  }
 }

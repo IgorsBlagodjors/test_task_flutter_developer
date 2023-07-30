@@ -6,7 +6,8 @@ import 'package:test_task_flutter_developer/domain/gif_repository.dart';
 
 class GifListCubit extends Cubit<GifListState> {
   final GifRepository _gifRepository;
-  List<GifClass> _currentItems = [];
+  int _offset = 0;
+  late List<GifClass> _currentItems = [];
   final logger = Logger();
 
   GifListCubit(this._gifRepository)
@@ -17,17 +18,19 @@ class GifListCubit extends Cubit<GifListState> {
             isError: false,
           ),
         );
-
-  Future<void> fetchCollection(String? query, int offset) async {
+  Future<void> fetchCollection(String? query) async {
     emit(state.copyWith(isLoading: true));
-    await Future.delayed(const Duration(milliseconds: 300));
     try {
-      final items = await _gifRepository.fetchCollection(query, offset);
-      offset != 0 ? _currentItems.addAll(items) : _currentItems = items;
+      final items = await _gifRepository.fetchCollection(query, _offset);
+      _offset != 0 ? _currentItems.addAll(items) : _currentItems = items;
+      _offset += 30;
       emit(state.copyWith(items: _currentItems, isLoading: false));
     } on Exception catch (ex, stacktrace) {
       logger.e('Failed to load: ex $ex, stacktrace: $stacktrace');
       emit(state.copyWith(isError: true, isLoading: false));
     }
+  }
+  setOffset(int value){
+    _offset = value;
   }
 }

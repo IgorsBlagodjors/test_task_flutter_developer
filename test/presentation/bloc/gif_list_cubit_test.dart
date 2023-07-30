@@ -40,7 +40,7 @@ void main() {
     blocTest(
       'Load Gift When App Starts',
       build: () => cubit,
-      act: (cubit) => cubit.fetchCollection('empty', 12),
+      act: (cubit) => cubit.fetchCollection('empty'),
       expect: () => [
         const GifListState(
           items: [],
