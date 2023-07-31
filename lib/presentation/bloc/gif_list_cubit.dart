@@ -1,13 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
-import 'package:test_task_flutter_developer/domain/gif_class.dart';
 import 'package:test_task_flutter_developer/presentation/bloc/gif_list_state.dart';
 import 'package:test_task_flutter_developer/domain/gif_repository.dart';
 
 class GifListCubit extends Cubit<GifListState> {
   final GifRepository _gifRepository;
   int _offset = 0;
-  late List<GifClass> _currentItems = [];
   final logger = Logger();
 
   GifListCubit(this._gifRepository)
@@ -22,9 +20,9 @@ class GifListCubit extends Cubit<GifListState> {
     emit(state.copyWith(isLoading: true));
     try {
       final items = await _gifRepository.fetchCollection(query, _offset);
-      _offset != 0 ? _currentItems.addAll(items) : _currentItems = items;
+      final allItems = _offset != 0 ? state.items + items : items;
       _offset += 30;
-      emit(state.copyWith(items: _currentItems, isLoading: false));
+      emit(state.copyWith(items: allItems, isLoading: false));
     } on Exception catch (ex, stacktrace) {
       logger.e('Failed to load: ex $ex, stacktrace: $stacktrace');
       emit(state.copyWith(isError: true, isLoading: false));

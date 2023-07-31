@@ -23,9 +23,8 @@ class DataItems {
       _$DataItemsFromJson(json);
 }
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable(createToJson: false, fieldRename: FieldRename.snake)
 class ImagesItems {
-  @JsonKey(name: 'fixed_height_small')
   final FixedHeightSmallItems fixedHeightSmall;
 
   const ImagesItems({required this.fixedHeightSmall});
@@ -40,8 +39,11 @@ class FixedHeightSmallItems {
   final String width;
   final String url;
 
-  const FixedHeightSmallItems(
-      {required this.height, required this.width, required this.url,});
+  const FixedHeightSmallItems({
+    required this.height,
+    required this.width,
+    required this.url,
+  });
 
   factory FixedHeightSmallItems.fromJson(Map<String, dynamic> json) =>
       _$FixedHeightSmallItemsFromJson(json);

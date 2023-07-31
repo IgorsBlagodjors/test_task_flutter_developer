@@ -19,10 +19,31 @@ class GifHomePage extends StatefulWidget {
       );
 }
 
+class CustomScrollPhysics extends ClampingScrollPhysics {
+  final double scrollingSpeed;
+
+  const CustomScrollPhysics({this.scrollingSpeed = 1.0});
+
+  @override
+  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
+    return offset * scrollingSpeed;
+  }
+}
+
+class CustomScrollBehavior extends ScrollBehavior {
+  final double scrollingSpeed;
+
+  const CustomScrollBehavior({this.scrollingSpeed = 1.0});
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    return CustomScrollPhysics(scrollingSpeed: scrollingSpeed);
+  }
+}
+
 class _GifHomePageState extends State<GifHomePage> {
   late final GifListCubit _cubit;
-  late TextEditingController _textEditingController;
-  late ScrollController _scrollController;
+  late final ScrollController _scrollController;
   bool _isLoadingMoreGifs = false;
   String? _queryFromLiveSearch;
   Timer? _searchTimer;
@@ -30,7 +51,6 @@ class _GifHomePageState extends State<GifHomePage> {
   @override
   void initState() {
     super.initState();
-    _textEditingController = TextEditingController();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _cubit = BlocProvider.of<GifListCubit>(context);
@@ -41,8 +61,6 @@ class _GifHomePageState extends State<GifHomePage> {
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
-    _textEditingController.dispose();
-    _cubit.close();
     super.dispose();
   }
 
@@ -99,62 +117,64 @@ class _GifHomePageState extends State<GifHomePage> {
             ),
           );
         }
-        return Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                TextFormField(
-                  controller: _textEditingController,
-                  onChanged: (query) {
-                    _searchTimer?.cancel();
-                    _cubit.setOffset(0);
-                    _searchTimer = Timer(
-                      const Duration(milliseconds: 300),
-                      () {
-                        _queryFromLiveSearch = query;
-                        _cubit.fetchCollection(query);
-                        _scrollController.jumpTo(0.0);
-                      },
-                    );
-                  },
-                  decoration: InputDecoration(
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                    hintText: 'Live search...',
-                    hintStyle: const TextStyle(
-                      color: Colors.black,
-                    ),
-                    contentPadding: const EdgeInsets.only(
-                      left: 48,
-                      top: 20,
-                      right: 147,
-                      bottom: 20,
-                    ),
-                    prefixIcon: const Padding(
-                      padding: EdgeInsets.only(
-                        left: 15,
-                        top: 19,
-                        bottom: 19,
+        return ScrollConfiguration(
+          behavior: const CustomScrollBehavior(scrollingSpeed: 0.5),
+          child: Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  TextFormField(
+                    onChanged: (query) {
+                      _searchTimer?.cancel();
+                      _cubit.setOffset(0);
+                      _searchTimer = Timer(
+                        const Duration(milliseconds: 300),
+                        () {
+                          _queryFromLiveSearch = query;
+                          _cubit.fetchCollection(query);
+                          _scrollController.jumpTo(0.0);
+                        },
+                      );
+                    },
+                    decoration: InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                      hintText: 'Live search...',
+                      hintStyle: const TextStyle(
+                        color: Colors.black,
                       ),
-                      child: Icon(Icons.search),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
+                      contentPadding: const EdgeInsets.only(
+                        left: 48,
+                        top: 20,
+                        right: 147,
+                        bottom: 20,
+                      ),
+                      prefixIcon: const Padding(
+                        padding: EdgeInsets.only(
+                          left: 15,
+                          top: 19,
+                          bottom: 19,
+                        ),
+                        child: Icon(Icons.search),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 32,
-                ),
-                Expanded(
-                  child: Center(child: child),
-                ),
-              ],
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  Expanded(
+                    child: Center(child: child),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -178,9 +198,9 @@ class _GifHomePageState extends State<GifHomePage> {
     }
   }
 
-  void _loadMoreGifs() {
+  void _loadMoreGifs()  {
     _isLoadingMoreGifs = true;
-    _cubit.fetchCollection(_queryFromLiveSearch).then((_) {
+   _cubit.fetchCollection(_queryFromLiveSearch).then((_) {
       _isLoadingMoreGifs = false;
     });
   }
