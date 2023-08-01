@@ -22,7 +22,8 @@ void main() {
   final gifApiClient = GifApiClient(dio);
   final networkGifRepository = NetworkGifRepository(gifApiClient);
   final networkRepositoryProvider = RepositoryProvider<GifRepository>(
-      create: (context) => networkGifRepository,);
+    create: (context) => networkGifRepository,
+  );
   runApp(
     MultiRepositoryProvider(
       providers: [

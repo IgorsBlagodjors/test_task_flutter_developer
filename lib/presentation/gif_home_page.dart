@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task_flutter_developer/presentation/bloc/gif_list_cubit.dart';
@@ -80,31 +81,24 @@ class _GifHomePageState extends State<GifHomePage> {
             itemBuilder: (_, index) {
               return Column(
                 children: [
-                  Image.network(
-                    data[index].gifUrl,
+                  CachedNetworkImage(
                     height: data[index].parsedHeight,
                     width: data[index].parsedWidth,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      }
-                      return const Center(
-                        child: SizedBox(
-                          height: 15,
-                          width: 15,
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.green),
-                            strokeWidth: 5,
-                          ),
+                    imageUrl: data[index].gifUrl,
+                    placeholder: (context, url) => const Center(
+                      child: SizedBox(
+                        height: 15,
+                        width: 15,
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.green),
+                          strokeWidth: 5,
                         ),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Center(
-                        child: Text('Gif loading failed'),
-                      );
-                    },
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => const Center(
+                      child: Text('Gif loading failed'),
+                    ),
                   ),
                 ],
               );
@@ -190,17 +184,15 @@ class _GifHomePageState extends State<GifHomePage> {
     double currentScrollExtent = _scrollController.position.pixels;
     double remainingScrollExtent = maxScrollExtent - currentScrollExtent;
     double pixelRemainder = 300;
-    //print('CURRENT POSITION${_scrollController.position}');
-    //print('MAX POSITION${_scrollController.position.maxScrollExtent}');
 
     if (remainingScrollExtent < pixelRemainder && !_isLoadingMoreGifs) {
       _loadMoreGifs();
     }
   }
 
-  void _loadMoreGifs()  {
+  void _loadMoreGifs() {
     _isLoadingMoreGifs = true;
-   _cubit.fetchCollection(_queryFromLiveSearch).then((_) {
+    _cubit.fetchCollection(_queryFromLiveSearch).then((_) {
       _isLoadingMoreGifs = false;
     });
   }

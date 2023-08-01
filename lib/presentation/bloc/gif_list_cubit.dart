@@ -16,6 +16,7 @@ class GifListCubit extends Cubit<GifListState> {
             isError: false,
           ),
         );
+
   Future<void> fetchCollection(String? query) async {
     emit(state.copyWith(isLoading: true));
     try {
@@ -28,7 +29,8 @@ class GifListCubit extends Cubit<GifListState> {
       emit(state.copyWith(isError: true, isLoading: false));
     }
   }
-  setOffset(int value){
+
+  setOffset(int value) {
     _offset = value;
   }
 }

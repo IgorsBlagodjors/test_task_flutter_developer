@@ -13,14 +13,6 @@ class NetworkGifRepository implements GifRepository {
     final response = isQueryEmpty
         ? await _gifApiClient.getItemsApiClient(offset: offset)
         : await _gifApiClient.getItemsApiClient(query: query, offset: offset);
-    final gif = response.map(
-      (e) => GifClass(
-        id: e.id,
-        gifUrl: e.images.fixedHeightSmall.url,
-        height: e.images.fixedHeightSmall.height,
-        width: e.images.fixedHeightSmall.width,
-      ),
-    );
-    return gif.toList();
+    return response;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:test_task_flutter_developer/domain/gif_class.dart';
 
 part 'gif_response.g.dart';
 
@@ -7,6 +8,19 @@ class FullResponse {
   List<DataItems> data;
 
   FullResponse({required this.data});
+
+  List<GifClass> toModel() {
+    return data
+        .map(
+          (dataItem) => GifClass(
+            id: dataItem.id,
+            gifUrl: dataItem.images.fixedHeightSmall.url,
+            height: dataItem.images.fixedHeightSmall.height,
+            width: dataItem.images.fixedHeightSmall.width,
+          ),
+        )
+        .toList();
+  }
 
   factory FullResponse.fromJson(Map<String, dynamic> json) =>
       _$FullResponseFromJson(json);
