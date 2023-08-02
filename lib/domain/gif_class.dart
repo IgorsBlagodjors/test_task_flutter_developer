@@ -18,5 +18,10 @@ class GifClass extends Equatable {
   double get parsedWidth => double.parse(width);
 
   @override
-  List<Object?> get props => [id, gifUrl, height, width];
+  List<Object?> get props => [
+        id,
+        gifUrl,
+        height,
+        width,
+      ];
 }
