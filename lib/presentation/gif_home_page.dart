@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task_flutter_developer/presentation/bloc/gif_list_cubit.dart';
 import 'package:test_task_flutter_developer/presentation/bloc/gif_list_state.dart';
@@ -67,6 +68,10 @@ class _GifHomePageState extends State<GifHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return BlocBuilder<GifListCubit, GifListState>(
       builder: (context, state) {
         Widget child;
